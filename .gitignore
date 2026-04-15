@@ -1,0 +1,9 @@
+# Keep repository clean but include full project sources
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS files
+.DS_Store
+Thumbs.db
