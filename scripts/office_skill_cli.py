@@ -1001,7 +1001,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Office skill ND30 utilities.")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    p_rebuild = sub.add_parser("rebuild", help="Rebuild from frozen ND30 template.")
+    p_rebuild = sub.add_parser(
+        "rebuild",
+        help="Build ND30-style .docx (2 layout tables) from source body; does not read Mau_*.docx template file.",
+    )
     p_rebuild.add_argument("--source", required=True)
     p_rebuild.add_argument("--output", required=True)
     p_rebuild.add_argument("--no-justify-body", action="store_true")

@@ -12,8 +12,10 @@ Skill cho **Cursor Agent** để **tạo và chỉnh sửa** văn bản Word (`.
 ```powershell
 git clone https://github.com/thanhnn91qn-afk/office-skill-vn.git
 cd office-skill-vn
-pip install python-docx
+pip install -r requirements.txt
 ```
+
+**Excel / PowerPoint (tài liệu trong `scripts/SKILL/`):** cài thêm `openpyxl`, `pandas`, hoặc `pptxgenjs` (npm) khi cần.
 
 ## Gắn skill vào Cursor
 
@@ -22,8 +24,9 @@ pip install python-docx
 
 ## Cấu trúc chính
 
-- `SKILL.md`: hướng dẫn chi tiết cho agent
-- `scripts/office_skill_cli.py`: CLI chính
+- `SKILL.md`: Word NĐ 30/78 + tóm tắt Office mở rộng
+- `scripts/office_skill_cli.py`: CLI công văn NĐ 30 (`rebuild`, `fix`, `legacy`)
+- `scripts/SKILL/`: tài liệu tham chiếu Word tổng quát, Excel, PowerPoint, [pptxgenjs.md](scripts/SKILL/pptxgenjs.md) — xem [scripts/SKILL/README.md](scripts/SKILL/README.md)
 
 ## Sử dụng nhanh
 

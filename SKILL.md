@@ -1,20 +1,19 @@
 ---
 name: office-skill-vn
 description: >-
-  Creates or edits Vietnamese Word (.docx): (A) administrative documents per Decree
-   30/2020 — default workflow copies Mau_cong_van_ND30_tai_ve.docx (two layout tables)
-  and fills cells; never overwrite that frozen file from scripts; do not rebuild header as plain paragraphs. (B) legal normative
-  documents per Decree 78/2025/NĐ-CP (layout and typography per annex). When the user
-  attaches an existing .docx, changes only requested text and preserves formatting. Use
-  for Word, docx, cong van, to trinh,
-  bao cao, luat, nghi dinh, thong tu, van ban quy pham phap luat, Nghi dinh 30,
-  Nghi dinh 78, the thuc van ban, chinh sua noi dung, tra loi cong van, quoc huy,
-  tieu ngu, chan ky, bang can chinh, Mau_cong_van_ND30_tai_ve,
-  Mau_cong_van_ND30_ban_tu_script, fix_tra_loi_header_layout, can le, quoc hieu mot dong,
-  gach ngang, Straight Connector, oxml_underline_after_motto.
+  Vietnamese office work: Word (.docx) per Decree 30/2020 and 78/2025/NĐ-CP (công văn,
+  trả lời công văn, văn bản QPPL, quốc hiệu, tiêu ngữ, chữ ký, bảng layout); Excel (.xlsx,
+  .xlsm, .csv) with formulas, openpyxl, pandas; PowerPoint (.pptx) decks, slides,
+  PptxGenJS, pitch deck. When the user attaches an existing .docx for NĐ30-style work,
+  preserve tables and formatting. Also: báo cáo, tờ trình, luật, nghị định, thông tư,
+  chỉnh sửa nội dung, căn lệ, gạch ngang, Straight Connector, office_skill_cli, rebuild, fix.
 ---
 
 # Word: administrative (Decree 30) and legal / normative (Decree 78)
+
+## Bộ tài liệu Office mở rộng
+
+Excel (.xlsx), PowerPoint (.pptx / PptxGenJS), và Word **không** thuộc thể thức NĐ 30/78: xem chỉ mục [scripts/SKILL/README.md](scripts/SKILL/README.md) và mở đúng file con. **Ưu tiên** vẫn là mục dưới đây + `scripts/office_skill_cli.py` cho công văn Việt Nam.
 
 ## Purpose
 
@@ -22,7 +21,7 @@ When the user asks to **create** or **edit** a Word file, load this skill and pi
 
 | Branch | Scope | Notes |
 |--------|--------|------|
-| **A** | Administrative / inter-agency style (reference **Decree 30/2020**) | **Default:** copy and fill **`Mau_cong_van_ND30_tai_ve.docx`** (tables + body). **Do not** overwrite that file with the generator. Optional generator output: **`Mau_cong_van_ND30_ban_tu_script.docx`**. |
+| **A** | Administrative / inter-agency style (reference **Decree 30/2020**) | **Hand edit:** copy và điền **`Mau_cong_van_ND30_tai_ve.docx`** (2 bảng + thân bài). **Hoặc** chạy **`python scripts/office_skill_cli.py rebuild`** — tạo `.docx` NĐ30 **mới** (2 bảng + gạch ngang) từ `--source` (trích thân bài + metadata), **không** đọc file mẫu `Mau_*.docx`. Không ghi đè file mẫu đông lạnh. |
 | **B** | **Legal normative** instruments (**Decree 78/2025/NĐ-CP** annex) | **Different first page**: state motto **top-right**, issuing body **top-left**, symbol/title rules differ — **do not** use the Decree 30 script to build this cover |
 
 - **New file (A)**: **Copy** `Mau_cong_van_ND30_tai_ve.docx` from this skill folder → **Save As** the output name → replace text **inside table cells and body paragraphs only**. See **Official Word template (branch A)** below.
@@ -44,7 +43,7 @@ This file is the **canonical** layout for Decree-30-style công văn / trả l�
 | **Alignment (table 0)** | **Row 1, left cell:** issuing body — **center**. **Row 1, right cell:** quốc hiệu + tiêu ngữ (+ horizontal line paragraph below) — **center**. **Row 2, left cell:** “Số…”, “V/v…” — **center** (frozen template). **Row 2, right cell:** địa danh + ngày — **right**. After edits, **restore** alignment if it was lost (common when assigning `paragraph.text` in python-docx). |
 | **Quốc hiệu — one line** | **One paragraph, one line:** **CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM** (in hoa đậm theo thông lệ NĐ 30). **No** soft line break (`Shift+Enter`) inside the name. If Word still wraps visually, **widen the right column** first. |
 | **Bold vs regular (table 0)** | **Left, row 1:** “TÊN CƠ QUAN CHỦ QUẢN” — **regular**. “TÊN CƠ QUAN BAN HÀNH” + “(dòng 2 nếu có)” — **bold**. **Right, row 1:** quốc hiệu + tiêu ngữ — **bold**. **Row 2, left:** “Số…”, “V/v…” — **regular**. **Row 2, right:** date — **italic**, not bold. Header rows: `w:spacing` after=0, line=288, lineRule=auto (frozen template). |
-| **Gạch ngang dưới tiêu ngữ** | **Straight Connector** (`prst="line"`) in a **separate paragraph** under “Độc lập - …”, centered — **not** `w:pBdr` for a match to the frozen file. OOXML: `scripts/oxml_underline_after_motto.xml` (`parse_xml` in `scripts/office_skill_cli.py`). Word: **Insert → Shapes → Line**, or copy that paragraph from the frozen template. If missing after edits, restore via `ensure_underline_after_motto_cell` in `scripts/office_skill_cli.py`. |
+| **Gạch ngang dưới tiêu ngữ** | **Straight Connector** (`prst="line"`) trong **đoạn riêng** dưới “Độc lập - …”, căn giữa — **không** dùng `w:pBdr` nếu cần khớp mẫu. OOXML nhúng trong `scripts/office_skill_cli.py` (`_MOTTO_CONNECTOR_XML` / `ensure_underline_after_motto_cell`). Word: **Insert → Shapes → Line**, hoặc chép đoạn từ mẫu đông lạnh. |
 | **Table 1 — chữ ký** | **Left:** “Nơi nhận” — **left**. **Right:** **one paragraph**, two **bold** runs: “KT. …” then **`w:br`** then “PHÓ …”; spacer lines; **bold** name — frozen template. |
 | **Body** | Normal paragraphs after the tables (e.g. “Kính gửi:”, “Căn cứ …”, numbered items, closing). |
 | **Table 1** — **1 row × 2 columns** | **Left:** “Nơi nhận: …”. **Right:** “KT. … / Phó …” + signer name block. |
@@ -245,7 +244,7 @@ Boxes **1–11** map to: motto block; issuing body; number/symbol; place & date;
 
 ### Mandatory execution policy (always apply)
 
-1. **Always export a `.docx` immediately** after gathering enough required inputs from the user/context.
+1. **Always export** the deliverable chính (`.docx` / `.xlsx` / `.pptx` / …) ngay khi đủ dữ liệu; với công văn NĐ 30 thì ưu tiên `.docx`.
 2. **Do not wait for extra confirmation** like “co xuat file khong?” before saving output.
 3. If output path is not explicitly provided, auto-create a deterministic file name in the same folder:
    - Edit existing file: `<ten_goc>_sua.docx` (unless user requests overwrite).
@@ -265,26 +264,22 @@ Boxes **1–11** map to: motto block; issuing body; number/symbol; place & date;
    - Auto-fill placeholders with Vietnamese defaults (with diacritics). If no exact mapping exists, remove brackets and keep readable text.
 7. Post-export gate (must pass):
    - `document.tables` count is **>= 2** for ND30 branch A outputs.
-   - If table count is `< 2`, mark output invalid and regenerate from `Mau_cong_van_ND30_tai_ve.docx`.
+   - If table count is `< 2`, mark output invalid and regenerate via **`rebuild`** or copy **`Mau_cong_van_ND30_tai_ve.docx`**.
 8. Vietnamese text quality:
    - Preserve Vietnamese diacritics; do not convert content to non-diacritic ASCII.
    - For ND30 outputs, prefer Vietnamese default values with full accents when auto-filling missing fields.
    - If source body appears non-diacritic, **stop export and report error** instead of writing a broken output file.
 
-### ND30 output quality guarantee (use the frozen template)
+### ND30 output quality guarantee
 
-When the user wants a Decree-30-style reply letter and there is a “draft” `.docx` whose output looks bad:
+When the user wants a Decree-30-style reply letter and a “draft” `.docx` có cấu trúc sai hoặc thiếu bảng:
 
-- **Do not attempt to "fix" the draft into shape.** Rebuild the final output by **copying** the frozen template `Mau_cong_van_ND30_tai_ve.docx` and inserting the body text into it.
-- Use helper script `scripts/office_skill_cli.py` subcommand `rebuild`:
-  - It copies the template to the output file.
-  - It removes any template body paragraphs between the **two layout tables**.
-  - It inserts the source document’s body paragraphs **before** the signature table.
-  - It removes empty spacer lines from source body, keeps paragraphs continuous, applies justify by default, and sets body font size default 14.
-  - It fills common ND30 placeholders (header/signature/body) with Vietnamese defaults if input data is missing.
-  - It sanitizes remaining placeholders globally so `[]` markers never appear in exported `.docx`.
-  - It never changes the template tables’ structure.
-  - It restores the **Straight Connector** horizontal line under the motto if that OOXML block is missing (same mechanism as `oxml_underline_after_motto.xml`).
+- **Không** cố “fix” nháp bằng chỉnh từng đoạn nếu user muốn đúng **2 bảng** chuẩn — dùng **`rebuild`** hoặc copy mẫu đông lạnh rồi điền ô.
+- **`python scripts/office_skill_cli.py rebuild --source … --output …`:**
+  - Đọc `--source`, kiểm tra tiếng Việt không lỗi; trích **thân bài** và dữ liệu header/chữ ký nếu có trong nguồn.
+  - **Tạo mới** `Document` NĐ30 (2 bảng layout trong **phần nội dung**, gạch dưới quốc hiệu/tiêu ngữ/tên cơ quan theo OOXML trong script).
+  - Gắn thân bài đã chuẩn hóa (justify mặc định, cỡ 14 pt, spacing 0 pt, v.v.), làm sạch placeholder `[]`.
+  - **Không** mở hay sao chép file `Mau_cong_van_ND30_tai_ve.docx` — mẫu đông lạnh vẫn dùng cho chỉnh tay / đối chiếu bố cục.
 
 **1. User edits an existing `.docx`**  
 Clarify scope → edit in place → save; do not regenerate from the Decree 30 script.
@@ -301,6 +296,12 @@ Do **not** use the Decree 30 script for the cover/first page. Build in Word or p
 - Branch A: `Mm(...)` margins; `PAGE` field in header (centered).
 - Branch B: often needs **“different first page”** header/footer behavior; align section breaks and fields with the annex; cross-check **margin bands** (15–20 mm top/bottom/right, 30–35 mm left).
 
+## Office mở rộng (tóm tắt)
+
+Chi tiết đầy đủ (docx-js, unpack/pack, Excel mô hình, PptxGenJS, QA slide): **[scripts/SKILL/README.md](scripts/SKILL/README.md)**.
+
+**Tóm tắt nhanh:** Excel — ưu tiên **công thức trong ô** (openpyxl/pandas), mở Excel/LibreOffice để tính lại và quét `#REF!`… PowerPoint — `npm install pptxgenjs`; màu hex **không** có `#`; không tái dùng object `options`; bullet qua API, không ký tự `•`. Word thường — python-docx hoặc `docx` (npm); OOXML thô chỉ khi cần tracked changes.
+
 ## Personalization
 
-Edit this `SKILL.md` or the reference file. Keep `description` rich in **keywords** (Decree 30, Decree 78, legal normative, luat, nghi dinh, thong tu, Word, docx, etc.) so the agent loads the skill when relevant.
+Edit this `SKILL.md`, [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md), or files under `scripts/SKILL/`. Keep `description` rich in **keywords** so the agent loads the skill when relevant.
