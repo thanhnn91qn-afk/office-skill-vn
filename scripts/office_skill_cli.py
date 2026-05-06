@@ -193,7 +193,7 @@ def _set_cell_paragraph_lines(cell, lines: list[str]) -> None:
 
 def _build_underline_paragraph(kind: str):
     """
-    Build a Straight Connector paragraph for the ND30 header cells.
+    Build a Straight Connector paragraph for the prescribed two-table header cells.
     kind:
       - 'agency': line under issuing agency (left header cell)
       - 'motto': line under motto/tiêu ngữ (right header cell)
@@ -941,7 +941,7 @@ def cmd_legacy(args) -> None:
     if not args.allow_legacy_stack:
         raise SystemExit(
             "Refuse to generate legacy centered-stack output. "
-            "Use Mau_cong_van_ND30_tai_ve.docx + scripts/office_skill_cli.py rebuild for ND30-compliant files. "
+            "Use Mau_cong_van_ND30_tai_ve.docx + scripts/office_skill_cli.py rebuild for prescribed two-table administrative letters. "
             "If you really need legacy stack, rerun with --allow-legacy-stack."
         )
     out = Path(args.output)
@@ -998,12 +998,14 @@ def cmd_legacy(args) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Office skill ND30 utilities.")
+    parser = argparse.ArgumentParser(
+        description="Office skill: prescribed two-table administrative .docx (mẫu quy định / tham chiếu NĐ 30)."
+    )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_rebuild = sub.add_parser(
         "rebuild",
-        help="Build ND30-style .docx (2 layout tables) from source body; does not read Mau_*.docx template file.",
+        help="Build prescribed two-table .docx from source body; does not read Mau_*.docx template file.",
     )
     p_rebuild.add_argument("--source", required=True)
     p_rebuild.add_argument("--output", required=True)
@@ -1011,7 +1013,7 @@ def main() -> None:
     p_rebuild.add_argument("--body-pt", type=int, choices=(13, 14), default=14)
     p_rebuild.set_defaults(func=cmd_rebuild)
 
-    p_fix = sub.add_parser("fix", help="Fix layout for existing ND30 doc.")
+    p_fix = sub.add_parser("fix", help="Fix/check prescribed two-table administrative .docx.")
     p_fix.add_argument("docx")
     p_fix.add_argument(
         "--spacing-only",

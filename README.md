@@ -1,6 +1,6 @@
 # office-skill-vn
 
-Skill cho **Cursor Agent** và công cụ dòng lệnh: **tạo / chỉnh** tài liệu Word (`.docx`) theo thể thức **Nghị định 30/2020** (công văn, trả lời công văn) và hướng dẫn tham chiếu **Nghị định 78/2025** (văn bản quy phạm pháp luật). Kèm thư mục **`scripts/SKILL/`** — tài liệu Word tổng quát, Excel, PowerPoint / PptxGenJS (bổ sung từ bộ skill Claude), không bắt buộc cho CLI công văn NĐ 30.
+Skill cho **Cursor Agent** và công cụ dòng lệnh: **tạo / chỉnh** tài liệu Word (`.docx`) **theo mẫu quy định** — công văn / trả lời công văn **hai bảng** (tham chiếu pháp lý thường gặp: **NĐ 30/2020**; chuẩn thực tế là **file mẫu** hoặc output `rebuild` đúng bố cục) và **văn bản QPPL** theo **phụ lục / mẫu** (tham chiếu **NĐ 78/2025**). Kèm **`scripts/SKILL/`** — Word tổng quát, Excel, PowerPoint / PptxGenJS (bổ sung Claude), không bắt buộc cho CLI hai bảng.
 
 ## Yêu cầu
 
@@ -35,16 +35,16 @@ $env:PYTHONIOENCODING = "utf-8"
 
 | Đường dẫn | Nội dung |
 |-----------|----------|
-| `SKILL.md` | Hướng dẫn đầy đủ cho agent: Word NĐ 30/78, quy trình, `python-docx`, tóm tắt Office mở rộng |
-| `reference-van-ban-quy-pham-phap-luat.md` | Tham chiếu thể thức văn bản QPPL (nhánh NĐ 78) |
+| `SKILL.md` | Hướng dẫn đầy đủ: **mẫu quy định** trước, NĐ 30/78 là tham chiếu; `python-docx`; Office mở rộng |
+| `reference-van-ban-quy-pham-phap-luat.md` | Tham chiếu văn bản QPPL (mẫu phụ lục; NĐ 78) |
 | `scripts/office_skill_cli.py` | CLI: `rebuild`, `fix`, `legacy` |
 | `scripts/SKILL/` | Tài liệu chi tiết Word / Excel / PowerPoint — xem [scripts/SKILL/README.md](scripts/SKILL/README.md) |
 
-**Lưu ý:** File mẫu Word `Mau_cong_van_ND30_tai_ve.docx` có thể do đơn vị bạn lưu riêng để chỉnh tay; lệnh **`rebuild`** **không** đọc file mẫu đó — nó **tạo mới** `.docx` hai bảng NĐ 30 từ `--source`.
+**Lưu ý:** `Mau_cong_van_ND30_tai_ve.docx` là **mẫu đông lạnh** gắn skill (đối chiếu NĐ 30); đơn vị có thể dùng mẫu riêng. **`rebuild`** **không** đọc file mẫu — **tạo mới** `.docx` **hai bảng đúng bố cục mẫu quy định** từ `--source`.
 
 ## Sử dụng CLI nhanh
 
-### 1) `rebuild` — tạo `.docx` NĐ 30 mới từ một file nguồn
+### 1) `rebuild` — tạo `.docx` hai bảng (mẫu quy định) từ file nguồn
 
 Trích **thân bài** (và metadata nếu có) từ `du_thao.docx`, xuất `ket_qua.docx` có hai bảng layout, gạch ngang quốc hiệu / tiêu ngữ / tên cơ quan theo logic trong script. Nguồn phải có tiếng Việt đầy đủ dấu (script từ chối nếu nghi ngờ mất dấu).
 
@@ -76,7 +76,7 @@ python scripts/office_skill_cli.py fix "file.docx" --apply-layout
 
 Kèm `--apply-layout` có thể dùng thêm: `--no-justify-body`, `--body-pt 13|14`, `--keep-empty-lines`.
 
-### 3) `legacy` — không dùng cho công văn hai bảng NĐ 30
+### 3) `legacy` — không dùng cho công văn hai bảng đúng mẫu
 
 Tạo kiểu xếp dòng căn giữa cũ; mặc định **bị từ chối** trừ khi thêm `--allow-legacy-stack`. Xem `SKILL.md` và `--help` của subcommand.
 

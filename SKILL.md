@@ -1,19 +1,25 @@
 ---
 name: office-skill-vn
 description: >-
-  Vietnamese office work: Word (.docx) per Decree 30/2020 and 78/2025/NĐ-CP (công văn,
-  trả lời công văn, văn bản QPPL, quốc hiệu, tiêu ngữ, chữ ký, bảng layout); Excel (.xlsx,
-  .xlsm, .csv) with formulas, openpyxl, pandas; PowerPoint (.pptx) decks, slides,
-  PptxGenJS, pitch deck. When the user attaches an existing .docx for NĐ30-style work,
-  preserve tables and formatting. Also: báo cáo, tờ trình, luật, nghị định, thông tư,
-  chỉnh sửa nội dung, căn lệ, gạch ngang, Straight Connector, office_skill_cli, rebuild, fix.
+  Vietnamese office Word (.docx): outputs follow prescribed templates (mẫu quy định) —
+  two-table administrative letters, QPPL annex layouts. Legal acts (e.g. NĐ 30/2020, NĐ 78/2025)
+  are reference only; the agency-approved sample file wins. Excel, PPTX, PptxGenJS.
+  Keywords: mẫu quy định, thể thức, công văn, trả lời công văn, quốc hiệu, tiêu ngữ,
+  office_skill_cli, rebuild, fix.
 ---
 
-# Word: administrative (Decree 30) and legal / normative (Decree 78)
+# Word — theo mẫu quy định (công văn hành chính và văn bản QPPL)
+
+## Nguyên tắc bắt buộc
+
+1. **Chuẩn thực thi là mẫu quy định** (file mẫu cơ quan, quyết định kèm mẫu, hoặc mẫu đông lạnh trong skill / kết quả `rebuild` đúng cấu trúc), **không** phải việc trích dẫn số Nghị định / Thông tư tuỳ tiện nếu làm lệch mẫu.
+2. **Văn bản pháp luật** (ví dụ Nghị định 30/2020 về công văn; Nghị định 78/2025 về thể thức văn bản QPPL) là **căn cứ pháp lý và khung** — agent **không** được đổi bố cục so với **mẫu đang áp dụng** với lý do “theo NĐ …” (kể cả khi số hiệu văn bản khác nhau trong hội thoại).
+3. **User đưa mẫu riêng** → **ưu tiên mẫu đó**; khớp bảng, font, căn lề với file user, không áp mẫu skill lên khi user đã chỉ định khác.
+4. **Nhánh B (QPPL):** tuân **phụ lục / sơ đồ chính thức** và [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md) — **không** dùng CLI hai bảng công văn để dựng trang bìa QPPL.
 
 ## Bộ tài liệu Office mở rộng
 
-Excel (.xlsx), PowerPoint (.pptx / PptxGenJS), và Word **không** thuộc thể thức NĐ 30/78: xem chỉ mục [scripts/SKILL/README.md](scripts/SKILL/README.md) và mở đúng file con. **Ưu tiên** vẫn là mục dưới đây + `scripts/office_skill_cli.py` cho công văn Việt Nam.
+Excel (.xlsx), PowerPoint (.pptx / PptxGenJS), và Word **ngoài** mẫu công văn / mẫu QPPL: xem [scripts/SKILL/README.md](scripts/SKILL/README.md). **Ưu tiên** mục dưới đây + `scripts/office_skill_cli.py` khi làm **công văn hai bảng** đúng mẫu quy định.
 
 ## Purpose
 
@@ -21,27 +27,27 @@ When the user asks to **create** or **edit** a Word file, load this skill and pi
 
 | Branch | Scope | Notes |
 |--------|--------|------|
-| **A** | Administrative / inter-agency style (reference **Decree 30/2020**) | **Hand edit:** copy và điền **`Mau_cong_van_ND30_tai_ve.docx`** (2 bảng + thân bài). **Hoặc** chạy **`python scripts/office_skill_cli.py rebuild`** — tạo `.docx` NĐ30 **mới** (2 bảng + gạch ngang) từ `--source` (trích thân bài + metadata), **không** đọc file mẫu `Mau_*.docx`. Không ghi đè file mẫu đông lạnh. |
-| **B** | **Legal normative** instruments (**Decree 78/2025/NĐ-CP** annex) | **Different first page**: state motto **top-right**, issuing body **top-left**, symbol/title rules differ — **do not** use the Decree 30 script to build this cover |
+| **A** | Công văn / trả lời công văn — **mẫu hai bảng** (thể thức hành chính; **tham chiếu pháp lý** thường gặp: NĐ 30/2020) | **Chỉnh tay:** copy và điền **`Mau_cong_van_ND30_tai_ve.docx`** hoặc mẫu đơn vị (2 bảng + thân bài). **Hoặc** **`python scripts/office_skill_cli.py rebuild`** — tạo `.docx` **mới** đúng bố cục mẫu (2 bảng + gạch ngang) từ `--source`, **không** đọc file mẫu `Mau_*.docx`. Không ghi đè mẫu đông lạnh. |
+| **B** | Văn bản QPPL — **mẫu phụ lục** (tham chiếu: **NĐ 78/2025/NĐ-CP**) | Trang 1 **khác** nhánh A (quốc hiệu phải, cơ quan trái, …) — **không** dùng script hai bảng công văn cho trang bìa này |
 
-- **New file (A)**: **Copy** `Mau_cong_van_ND30_tai_ve.docx` from this skill folder → **Save As** the output name → replace text **inside table cells and body paragraphs only**. See **Official Word template (branch A)** below.
-- **New file (B)**: follow **Branch B** below; verify against the **official** text (Cong bao / national legal database) and [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md).
+- **New file (A)**: **Copy** mẫu quy định (`Mau_cong_van_ND30_tai_ve.docx` nếu dùng mẫu của skill) → **Save As** → replace text **inside table cells and body paragraphs only**. See **Official Word template (branch A)** below.
+- **New file (B)**: follow **Branch B** below; verify against the **official** text (Công báo / CSDL pháp luật) and [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md).
 - **Edit existing file**: change **only** the requested wording; **preserve** all formatting — see **In-place edits**; do **not** rebuild the whole document from script or plain paragraphs.
 
 ## Official Word template (branch A) — **Mau_cong_van_ND30_tai_ve.docx**
 
 **Path (next to this `SKILL.md`):** `Mau_cong_van_ND30_tai_ve.docx`
 
-**Frozen hand-tuned template — do not overwrite.** `Mau_cong_van_ND30_tai_ve.docx` is **authoritative**. **Never** save over it from scripts or agents. Generator twin: **`Mau_cong_van_ND30_ban_tu_script.docx`**. Workflow: **Copy** frozen file → **Save As** new name → edit cells only.
+**Frozen hand-tuned template — do not overwrite.** `Mau_cong_van_ND30_tai_ve.docx` is **authoritative** as the **prescribed sample** bundled with this skill (aligns with common administrative practice under **NĐ 30/2020** and related guidance). **Never** save over it from scripts or agents. Generator twin: **`Mau_cong_van_ND30_ban_tu_script.docx`**. Workflow: **Copy** frozen file → **Save As** new name → edit cells only.
 
-This file is the **canonical** layout for Decree-30-style công văn / trả lời công văn in this skill. Inspected structure:
+This file is the **canonical** layout for **mẫu hai bảng** công văn / trả lời công văn in this skill. Inspected structure:
 
 | Structure | Role |
 |-----------|------|
 | **Table 0** — **3 rows × 2 columns** | **Left column:** issuing body line(s), then “Số / V/v …” line. **Right column:** “CỘNG HÒA…” + “Độc lập…” (state name + motto), then place + date. Row 3 may be spacer — **keep as in template**. |
 | **Column widths (table 0)** | **Do not** use **equal** half-width columns (e.g. 50 % / 50 %) unless house style requires it. Equal narrow halves make **Quốc hiệu** **wrap** to a second line in Word. **Canonical in this skill:** left ~**2800** twips (~49 mm), right ~**6554** twips (~115 mm), row total **9354** twips — see `scripts/office_skill_cli.py` (`fix` subcommand). |
 | **Alignment (table 0)** | **Row 1, left cell:** issuing body — **center**. **Row 1, right cell:** quốc hiệu + tiêu ngữ (+ horizontal line paragraph below) — **center**. **Row 2, left cell:** “Số…”, “V/v…” — **center** (frozen template). **Row 2, right cell:** địa danh + ngày — **right**. After edits, **restore** alignment if it was lost (common when assigning `paragraph.text` in python-docx). |
-| **Quốc hiệu — one line** | **One paragraph, one line:** **CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM** (in hoa đậm theo thông lệ NĐ 30). **No** soft line break (`Shift+Enter`) inside the name. If Word still wraps visually, **widen the right column** first. |
+| **Quốc hiệu — one line** | **One paragraph, one line:** **CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM** (in hoa đậm theo **mẫu quy định** / thông lệ mẫu công văn). **No** soft line break (`Shift+Enter`) inside the name. If Word still wraps visually, **widen the right column** first. |
 | **Bold vs regular (table 0)** | **Left, row 1:** “TÊN CƠ QUAN CHỦ QUẢN” — **regular**. “TÊN CƠ QUAN BAN HÀNH” + “(dòng 2 nếu có)” — **bold**. **Right, row 1:** quốc hiệu + tiêu ngữ — **bold**. **Row 2, left:** “Số…”, “V/v…” — **regular**. **Row 2, right:** date — **italic**, not bold. Header rows: `w:spacing` after=0, line=288, lineRule=auto (frozen template). |
 | **Gạch ngang dưới tiêu ngữ** | **Straight Connector** (`prst="line"`) trong **đoạn riêng** dưới “Độc lập - …”, căn giữa — **không** dùng `w:pBdr` nếu cần khớp mẫu. OOXML nhúng trong `scripts/office_skill_cli.py` (`_MOTTO_CONNECTOR_XML` / `ensure_underline_after_motto_cell`). Word: **Insert → Shapes → Line**, hoặc chép đoạn từ mẫu đông lạnh. |
 | **Table 1 — chữ ký** | **Left:** “Nơi nhận” — **left**. **Right:** **one paragraph**, two **bold** runs: “KT. …” then **`w:br`** then “PHÓ …”; spacer lines; **bold** name — frozen template. |
@@ -61,7 +67,7 @@ This file is the **canonical** layout for Decree-30-style công văn / trả l�
 
 **When to use `scripts/office_skill_cli.py legacy`**
 
-- Treat this as **legacy-only emergency path**. For ND30 reply letters, do **not** use it.
+- Treat this as **legacy-only emergency path**. For **mẫu hai bảng** / trả lời công văn đúng quy định, do **not** use it.
 - Use only when both conditions are true:
   1. User explicitly rejects table-based template, and
   2. `Mau_cong_van_ND30_tai_ve.docx` is unavailable.
@@ -134,11 +140,11 @@ Apply these defaults unless the user template explicitly differs:
 
 ### Script `office_skill_cli.py legacy` (legacy, blocked by default)
 
-- This script builds a **simple centered stack** without the 2-table ND30 layout.
+- This script builds a **simple centered stack** without the **2-table prescribed layout**.
 - It is now **blocked by default** and requires explicit `--allow-legacy-stack`.
-- For ND30-compliant outputs, use `Mau_cong_van_ND30_tai_ve.docx` + `python scripts/office_skill_cli.py rebuild ...`.
+- For outputs matching **mẫu hai bảng**, use `Mau_cong_van_ND30_tai_ve.docx` + `python scripts/office_skill_cli.py rebuild ...`.
 
-## Helper script — legacy centered stack (do not use for ND30 template output)
+## Helper script — legacy centered stack (do not use for prescribed two-table output)
 
 - **Default for new branch A files:** use **`Mau_cong_van_ND30_tai_ve.docx`** (see above).
 - The legacy script below is for exceptional fallback only and needs explicit opt-in flag.
@@ -173,7 +179,7 @@ python scripts/office_skill_cli.py legacy --allow-legacy-stack --output "van_ban
 - `--line-exact-pt 0` → single line spacing.
 - `--body-pt 14` →14 pt body (default 13).
 
-## Branch A — Technical specs (Decree 30 / common administrative)
+## Branch A — Technical specs (mẫu công văn hành chính / tham chiếu NĐ 30)
 
 | Item | Value |
 |------|--------|
@@ -185,14 +191,14 @@ python scripts/office_skill_cli.py legacy --allow-legacy-stack --output "van_ban
 | Paragraph spacing | **6 pt** before/after typical body paragraphs |
 | Page numbers | **Centered** in **header**, Times New Roman, **13–14 pt** |
 
-## Branch A — Front block (centered stack / Decree 30 style)
+## Branch A — Front block (centered stack — chỉ legacy, không thay mẫu hai bảng)
 
 **If `Mau_cong_van_ND30_tai_ve.docx` exists:** ignore this “centered stack” list for **new** documents — the template’s **tables** define the layout. This list applies only to **legacy** output from `office_skill_cli.py legacy` or documents without the template.
 
 If the document includes **Quoc huy** beside **Quoc hieu**, prefer the **Table layout for header** section above instead of a single centered column.
 
 1. **State name** — full official name of the country, uppercase — **13 pt**, bold, **center**.
-2. **Motto** — three standard hyphenated phrases — **13 pt**, bold, **center** (capitalization per Decree 30 practice).
+2. **Motto** — three standard hyphenated phrases — **13 pt**, bold, **center** (capitalization per **mẫu quy định**).
 3. **Issuing body** — **13 pt**, uppercase, bold, **center**.
 4. **Number / symbol** — **13 pt**, regular, **center**.
 5. **Place and date** — **13 pt**, italic, **right**.
@@ -200,9 +206,9 @@ If the document includes **Quoc huy** beside **Quoc hieu**, prefer the **Table l
 
 Body after the subject: follow the technical table above unless the user specifies otherwise.
 
-## Branch B — Legal normative documents (Decree 78/2025/NĐ-CP annex)
+## Branch B — Legal normative documents (mẫu phụ lục — tham chiếu NĐ 78/2025/NĐ-CP)
 
-Summarized from the **Decree 78/2025/NĐ-CP** annex on form and presentation of legal normative instruments. For authoritative wording, use the official published annex and [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md).
+Summarized from the **official annex / prescribed diagram** for legal normative instruments (**NĐ 78/2025/NĐ-CP**). **Bản công bố chính thức và mẫu đính kèm** là chuẩn; dùng [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md) để đối chiếu.
 
 ### I. General
 
@@ -238,13 +244,13 @@ Summarized from the **Decree 78/2025/NĐ-CP** annex on form and presentation of 
 
 ### IV. Diagram (first A4 page)
 
-Boxes **1–11** map to: motto block; issuing body; number/symbol; place & date; instrument title; body text; signature lines; seal; distribution; classification marking; typist mark / copy count — match the **official diagram** in Decree **78/2025/NĐ-CP**.
+Boxes **1–11** map to: motto block; issuing body; number/symbol; place & date; instrument title; body text; signature lines; seal; distribution; classification marking; typist mark / copy count — match the **official prescribed diagram** (phụ lục **78/2025/NĐ-CP**).
 
 ## Agent workflow
 
 ### Mandatory execution policy (always apply)
 
-1. **Always export** the deliverable chính (`.docx` / `.xlsx` / `.pptx` / …) ngay khi đủ dữ liệu; với công văn NĐ 30 thì ưu tiên `.docx`.
+1. **Always export** the deliverable chính (`.docx` / `.xlsx` / `.pptx` / …) ngay khi đủ dữ liệu; với **công văn theo mẫu quy định** (hai bảng) thì ưu tiên `.docx` đúng mẫu.
 2. **Do not wait for extra confirmation** like “co xuat file khong?” before saving output.
 3. If output path is not explicitly provided, auto-create a deterministic file name in the same folder:
    - Edit existing file: `<ten_goc>_sua.docx` (unless user requests overwrite).
@@ -263,33 +269,33 @@ Boxes **1–11** map to: motto block; issuing body; number/symbol; place & date;
    - Do not leave bracket markers like `[Tên đơn vị]`, `[Địa danh]`, `[Họ và tên]`.
    - Auto-fill placeholders with Vietnamese defaults (with diacritics). If no exact mapping exists, remove brackets and keep readable text.
 7. Post-export gate (must pass):
-   - `document.tables` count is **>= 2** for ND30 branch A outputs.
-   - If table count is `< 2`, mark output invalid and regenerate via **`rebuild`** or copy **`Mau_cong_van_ND30_tai_ve.docx`**.
+   - `document.tables` count is **>= 2** for **branch A (mẫu hai bảng)** outputs.
+   - If table count is `< 2`, mark output invalid and regenerate via **`rebuild`** or copy **`Mau_cong_van_ND30_tai_ve.docx`** (or the user’s prescribed template).
 8. Vietnamese text quality:
    - Preserve Vietnamese diacritics; do not convert content to non-diacritic ASCII.
-   - For ND30 outputs, prefer Vietnamese default values with full accents when auto-filling missing fields.
+   - For **mẫu công văn** outputs, prefer Vietnamese default values with full accents when auto-filling missing fields.
    - If source body appears non-diacritic, **stop export and report error** instead of writing a broken output file.
 
-### ND30 output quality guarantee
+### Đảm bảo output đúng mẫu hai bảng (branch A)
 
-When the user wants a Decree-30-style reply letter and a “draft” `.docx` có cấu trúc sai hoặc thiếu bảng:
+When the user wants a **reply letter / công văn đúng mẫu quy định** and a “draft” `.docx` có cấu trúc sai hoặc thiếu bảng:
 
-- **Không** cố “fix” nháp bằng chỉnh từng đoạn nếu user muốn đúng **2 bảng** chuẩn — dùng **`rebuild`** hoặc copy mẫu đông lạnh rồi điền ô.
+- **Không** cố “fix” nháp bằng chỉnh từng đoạn nếu user cần đúng **2 bảng** — dùng **`rebuild`** hoặc copy **mẫu đông lạnh** rồi điền ô.
 - **`python scripts/office_skill_cli.py rebuild --source … --output …`:**
   - Đọc `--source`, kiểm tra tiếng Việt không lỗi; trích **thân bài** và dữ liệu header/chữ ký nếu có trong nguồn.
-  - **Tạo mới** `Document` NĐ30 (2 bảng layout trong **phần nội dung**, gạch dưới quốc hiệu/tiêu ngữ/tên cơ quan theo OOXML trong script).
+  - **Tạo mới** `Document` đúng **bố cục mẫu hai bảng** (trong **phần nội dung**, gạch dưới quốc hiệu/tiêu ngữ/tên cơ quan theo OOXML trong script).
   - Gắn thân bài đã chuẩn hóa (justify mặc định, cỡ 14 pt, spacing 0 pt, v.v.), làm sạch placeholder `[]`.
-  - **Không** mở hay sao chép file `Mau_cong_van_ND30_tai_ve.docx` — mẫu đông lạnh vẫn dùng cho chỉnh tay / đối chiếu bố cục.
+  - **Không** mở hay sao chép file `Mau_cong_van_ND30_tai_ve.docx` khi chạy lệnh — mẫu đông lạnh vẫn dùng cho chỉnh tay / đối chiếu bố cục.
 
 **1. User edits an existing `.docx`**  
-Clarify scope → edit in place → save; do not regenerate from the Decree 30 script.
+Clarify scope → edit in place → save; do not regenerate from CLI unless user asks for full **mẫu hai bảng** rebuild.
 
 **2. User wants a new branch A file**  
-**Copy** `Mau_cong_van_ND30_tai_ve.docx` → Save As → fill **tables[0]**, **tables[1]**, and body text. **Do not** emit a header as plain paragraphs only.  
+**Copy** mẫu quy định (`Mau_cong_van_ND30_tai_ve.docx` hoặc mẫu đơn vị) → Save As → fill **tables[0]**, **tables[1]**, and body text. **Do not** emit a header as plain paragraphs only.  
 If output has **0 tables** or header is plain stacked paragraphs, treat it as failed generation and regenerate via template workflow.
 
 **3. User wants a new branch B file**  
-Do **not** use the Decree 30 script for the cover/first page. Build in Word or python-docx per **Branch B**; implement **different first page** for headers if needed so **page 1 has no page number**; page numbers **13 pt**, **top margin**, **centered** from page 2 onward (or as in the user’s template).
+Do **not** use the **two-table administrative** CLI for the QPPL cover/first page. Build in Word or python-docx per **Branch B**; implement **different first page** for headers if needed so **page 1 has no page number**; page numbers **13 pt**, **top margin**, **centered** from page 2 onward (or as in the user’s template).
 
 ## Implementation notes (python-docx)
 
@@ -304,4 +310,4 @@ Chi tiết đầy đủ (docx-js, unpack/pack, Excel mô hình, PptxGenJS, QA sl
 
 ## Personalization
 
-Edit this `SKILL.md`, [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md), or files under `scripts/SKILL/`. Keep `description` rich in **keywords** so the agent loads the skill when relevant.
+Edit this `SKILL.md`, [reference-van-ban-quy-pham-phap-luat.md](reference-van-ban-quy-pham-phap-luat.md), or files under `scripts/SKILL/`. Keep `description` rich in **keywords** (mẫu quy định, công văn, QPPL, …) so the agent loads the skill when relevant.

@@ -12,4 +12,4 @@ Các file trong thư mục này bổ sung cho **`SKILL.md`** ở gốc repo `off
 
 **Lưu ý:** Một số đoạn trong các file gốc trỏ tới CLI/script ngoài repo (`extract-text`, `scripts/office/unpack.py`, `scripts/recalc.py`, `editing.md`, …). Trong môi trường chỉ có skill này, hãy thay bằng: giải nén ZIP (`.docx` / `.pptx` là ZIP), **python-docx**, **openpyxl**, **PptxGenJS**, pandoc hoặc LibreOffice nếu đã cài.
 
-Công văn NĐ 30 hai bảng + CLI nội bộ: luôn ưu tiên `../office_skill_cli.py` và hướng dẫn trong `SKILL.md` gốc repo.
+Công văn **hai bảng theo mẫu quy định** (tham chiếu NĐ 30): ưu tiên `../office_skill_cli.py` và `SKILL.md` gốc repo.
